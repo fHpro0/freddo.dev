@@ -1,0 +1,43 @@
+// | -------------------------------------------------------------
+// | Globals
+// | -------------------------------------------------------------
+
+@use 'base/reset';
+@use 'base/root';
+@use 'base/font';
+@use 'base/list';
+@use 'base/container';
+@use 'base/breakpoint';
+@use 'base/button';
+@use 'base/color';
+@use 'base/outline';
+@use 'base/space-content';
+@use 'devicon/devicon.min.css';
+
+.text-gradient {
+    font-weight: bold;
+    text-transform: uppercase;
+    background: linear-gradient(315deg, var(--primary-100) 25%, var(--secondary-100));
+    background-clip: border-box;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  :global(.darkmode .text-gradient) {
+    font-weight: bold;
+    text-transform: uppercase;
+    background: linear-gradient(315deg, var(--primary-200) 25%, var(--secondary-200));
+    background-clip: border-box;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .color-gradient {
+    background: linear-gradient(260deg, var(--primary-100) 25%, var(--secondary-100));
+    border: none;
+  }
+
+  :global(.darkmode .color-gradient) {
+    background: linear-gradient(260deg, var(--primary-100) 25%, var(--secondary-100));
+    border: none;
+  }
