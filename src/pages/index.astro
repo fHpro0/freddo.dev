@@ -1,0 +1,64 @@
+---
+import DefaultLayout from '../layouts/DefaultLayout.astro'
+import Hero from '../components/Hero.astro'
+import Skill from '../components/Skill.astro'
+import Icon from '../components/Icon.astro'
+import ContentMedia from '../components/ContentMedia.astro'
+---
+
+<DefaultLayout title="Home">
+  <Hero />
+  <ContentMedia imgSrc="/memoji_smile.png">
+    <h2>About me</h2>
+    <p class="text-2xl">
+      I developed an interest in programming at the age of 15, starting with the basics of HTML, JavaScript, and CSS. As
+      I delved into PHP, I realized its potential for dynamic applications. Despite beginning my career with an
+      apprenticeship as an industrial mechanic at <a class="text-gradient" href="https://www.scherdel.com">Scherdel</a>,
+      I recognized early in the third year that it wasn't my passion. Transitioning to <a
+        class="text-gradient"
+        href="https://www.tmt.de">TMT</a
+      >, I completed a successful 3-year apprenticeship as a Specialist in Application Development (Fachinformatiker
+      Anwendungsentwicklung). Currently, I work as a Full-Stack Developer at the same company and expand my skills.
+    </p>
+  </ContentMedia>
+  <ContentMedia imgSrc="/memoji_pc.png" reverseImg={true}>
+    <h2>My <span class="text-gradient">Skills</span></h2>
+    <div class="grid grid-cols-6 gap-12 gap-y-4 lg:grid-cols-10">
+      <Icon icon="git" title="Git" />
+      <Icon icon="go" wordmark={true} title="Golang" />
+      <Icon icon="php" title="PHP" />
+      <Icon icon="dart" wordmark={true} title="Dart" />
+      <Icon icon="javascript" title="Javascript" />
+      <Icon icon="typescript" title="Typescript" />
+      <Icon icon="python" title="Python" />
+      <Icon icon="cplusplus" title="C++" />
+      <Icon icon="mysql" title="Mysql" />
+      <Icon icon="sqlite" title="SQLite" />
+      <Icon icon="html5" title="HTML5" />
+      <Icon icon="css3" title="CSS3" />
+      <Icon icon="sass" title="Sass" />
+    </div>
+    <div class="grid grid-cols-6 gap-12 gap-y-4 lg:grid-cols-10">
+      <Icon icon="flutter" title="Flutter" />
+      <Icon icon="vuejs" title="Vue.js" />
+      <Icon icon="nodejs" title="Node.js" />
+      <Icon icon="jquery" title="JQuery" />
+      <Icon icon="pytorch" title="PyTorch" />
+      <Icon icon="bootstrap" title="Bootstrap" />
+      <Icon icon="tailwindcss" title="TailwindCss" />
+    </div><div class="grid grid-cols-6 gap-12 gap-y-4 lg:grid-cols-10">
+      <Icon icon="wordpress" colored={false} title="Wordpress" />
+      <Icon icon="docker" title="Docker" />
+      <Icon icon="jetbrains" title="Jetbrains" />
+      <Icon icon="vscode" title="VS-Code" />
+      <Icon icon="arduino" title="Arduino" />
+      <Icon icon="linux" colored={false} title="Linux" />
+      <Icon icon="markdown" colored={false} title="Markdown" />
+      <Icon icon="apple" colored={false} title="Apple" />
+      <Icon icon="github" colored={false} title="Github" />
+      <Icon icon="gitlab" title="Gitlab" />
+      <Icon icon="debian" title="Debian" />
+      <Icon icon="composer" colored={false} title="Composer" />
+    </div>
+  </ContentMedia>
+</DefaultLayout>
