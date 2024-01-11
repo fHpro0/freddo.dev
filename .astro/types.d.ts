@@ -187,7 +187,7 @@ declare module 'astro:content' {
 		"post": {
 "first.mdx": {
 	id: "first.mdx";
-  slug: "first";
+  slug: "hello-world";
   body: string;
   collection: "post";
   data: InferEntrySchema<"post">
