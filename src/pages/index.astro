@@ -1,58 +1,94 @@
 ---
 import DefaultLayout from '../layouts/DefaultLayout.astro'
-import Hero from '../components/Hero.astro'
 import Icon from '../components/Icon.astro'
 import ContentMedia from '../components/ContentMedia.astro'
 ---
 
 <DefaultLayout title="Home">
-  <Hero />
-  <ContentMedia imgSrc="/memoji_smile.png">
-    <h2>About me</h2>
-    <p class="text-2xl">
-      I developed an interest in programming at the age of 15, starting with the basics of HTML, JavaScript, and CSS. As
-      I delved into PHP, I realized its potential for dynamic applications. Despite beginning my career with an
-      apprenticeship as an industrial mechanic at <a class="text-gradient" href="https://www.scherdel.com">Scherdel</a>,
-      I recognized early in the third year that it wasn't my passion. Transitioning to <a
-        class="text-gradient"
-        href="https://www.tmt.de">TMT</a
-      >, I completed a successful 3-year apprenticeship as a Specialist in Application Development (Fachinformatiker
-      Anwendungsentwicklung). Currently, I work as a Full-Stack Developer at the same company and expand my skills.
-    </p>
-  </ContentMedia>
-  <ContentMedia imgSrc="/memoji_pc.png" reverseImg={true}>
-    <h2>My <span class="text-gradient">Skills</span></h2>
+  <section class="hero my-2">
+    <div class="container">
+      <div class="grid grid-cols-1 items-center gap-y-32 lg:grid-cols-2">
+        <div class="flex flex-col items-center gap-8 lg:items-start col-span-1">
+          <h1 class="text-center text-6xl md:text-left lg:text-8xl">
+            <slot>Hey, I am <span class="text-gradient">Freddy 👋</span></slot>
+          </h1>
+          <div class="flex gap-3 flex-row">
+            <a class="button has-icon color-secondary w-max" target="_blank" href="https://github.com/fHpro0">
+              <Icon pack="ri" name="github-line" />
+              Github
+            </a>
+            <a
+              class="button has-icon color-gradient"
+              target="_blank"
+              href="https://www.linkedin.com/in/frederick-hörner-8942a82a8/"
+            >
+              <Icon pack="ri" name="linkedin-line" />
+              LinkedIn
+            </a>
+            <a class="button has-icon" target="_blank" href="https://www.instagram.com/fH_pro0">
+              <Icon pack="mdi" name="instagram" />
+              Instagram
+            </a>
+          </div>
+        </div>
+        <div class="flex justify-center col-span-1">
+          <img class="w-96" src="/memoji_hello.png" alt="" decoding="async" />
+        </div>
+        <div class="justify-center col-span-1 lg:col-span-2">
+          <h2 class="text-gradient">About me</h2>
+          <p class="text-2xl">
+            I developed an interest in programming at the age of 15, starting with the basics of HTML, JavaScript, and CSS. As
+            I delved into PHP, I realized its potential for dynamic applications. Despite beginning my career with an
+            apprenticeship as an industrial mechanic at <a class="text-gradient" href="https://www.scherdel.com">Scherdel</a>,
+            I recognized early in the third year that it wasn't my passion. Transitioning to <a
+              class="text-gradient"
+              href="https://www.tmt.de">TMT</a
+            >, I completed a successful <b class="text-gradient">3-year (2019-2022)</b> apprenticeship as a Specialist in Application Development (Fachinformatiker
+            Anwendungsentwicklung). Currently, I work as a Full-Stack Developer at the same company and expand my skills.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ContentMedia imgSrc="/memoji_pc.png" reverseImg={false}>
+    <h2 class="self-center">My <span class="text-gradient">Skills</span></h2>
+    <h3>"Languages"</h3>
     <div class="grid grid-cols-6 gap-12 gap-y-4 lg:grid-cols-10">
-      <Icon icon="git" title="Git" />
-      <Icon icon="php" title="PHP" />
-      <Icon icon="dart" wordmark={true} title="Dart" />
-      <Icon icon="javascript" title="Javascript" />
-      <Icon icon="typescript" title="Typescript" />
       <Icon icon="python" title="Python" />
-      <Icon icon="mysql" title="Mysql" />
-      <Icon icon="sqlite" title="SQLite" />
+      <Icon icon="php" title="PHP" />
+      <Icon icon="typescript" title="Typescript" />
+      <Icon icon="javascript" title="Javascript" />
       <Icon icon="html5" title="HTML5" />
       <Icon icon="css3" title="CSS3" />
       <Icon icon="sass" title="Sass" />
+      <Icon icon="dart" wordmark={true} title="Dart" />
     </div>
+    <h3>Frameworks</h3>
     <div class="grid grid-cols-6 gap-12 gap-y-4 lg:grid-cols-10">
-      <Icon icon="flutter" title="Flutter" />
-      <Icon icon="vuejs" title="Vue.js" />
-      <Icon icon="nodejs" title="Node.js" />
-      <Icon icon="jquery" title="JQuery" />
       <Icon icon="pytorch" title="PyTorch" />
       <Icon icon="tailwindcss" title="TailwindCss" />
-    </div><div class="grid grid-cols-6 gap-12 gap-y-4 lg:grid-cols-10">
-      <Icon icon="wordpress" colored={false} title="Wordpress" />
+      <Icon icon="vuejs" title="Vue.js" />
+      <Icon icon="flutter" title="Flutter" />
+      <Icon icon="jquery" title="JQuery" />
+    </div>
+    <h3>Develop with</h3>
+    <div class="grid grid-cols-6 gap-12 gap-y-4 lg:grid-cols-10">
+      <Icon icon="git" title="Git" />
       <Icon icon="docker" title="Docker" />
-      <Icon icon="jetbrains" title="Jetbrains" />
-      <Icon icon="vscode" title="VS-Code" />
-      <Icon icon="arduino" title="Arduino" />
       <Icon icon="linux" colored={false} title="Linux" />
-      <Icon icon="markdown" colored={false} title="Markdown" />
       <Icon icon="apple" colored={false} title="Apple" />
       <Icon icon="github" colored={false} title="Github" />
       <Icon icon="gitlab" title="Gitlab" />
+      <Icon icon="jetbrains" title="Jetbrains" />
+      <Icon icon="vscode" title="VS-Code" />
+    </div>
+    <h3>Others</h3>
+    <div class="grid grid-cols-6 gap-12 gap-y-4 lg:grid-cols-10">
+      <Icon icon="mysql" title="Mysql" />
+      <Icon icon="sqlite" title="SQLite" />
+      <Icon icon="wordpress" colored={false} title="Wordpress" />
+      <Icon icon="arduino" title="Arduino" />
       <Icon icon="debian" title="Debian" />
       <Icon icon="composer" colored={false} title="Composer" />
     </div>

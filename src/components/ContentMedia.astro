@@ -1,12 +1,10 @@
 ---
-import { Media } from 'accessible-astro-components'
-
 const { imgSrc, reverseImg = false } = Astro.props
 ---
 
-<section class="my-64">
+<section class="my-32">
   <div class="container">
-    <div class="grid grid-cols-1 gap-y-12 md:grid-cols-3 md:gap-24">
+    <div class="grid grid-cols-1 md:grid-cols-3 md:gap-24">
       {
         !reverseImg ? (
           <div class="flex items-center justify-center">
