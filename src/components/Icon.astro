@@ -2,6 +2,6 @@
 const { icon, colored = true, wordmark = false, title = '' } = Astro.props
 ---
 
-<p class="text-6xl" title={title}>
+<p class="text-6xl w-fit" title={title}>
   <i class={'devicon-' + icon + '-plain' + (wordmark ? '-wordmark' : '') + (colored ? ' colored' : '')}></i>
 </p>
