@@ -132,10 +132,10 @@
   &.has-icon {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    text-overflow: clip;
 
     [astro-icon] {
-      width: 30px;
+      width: 20px;
     }
   }
 }
