@@ -6,18 +6,19 @@ import { SkipLinks } from 'accessible-astro-components'
 <header>
   <SkipLinks />
   <Navigation>
-    <li class="menu-item">
-      <a href="/">Home</a>
-    </li>
-    <li class="menu-item">
-      <a href="https://github.com/fHpro0">Github</a>
-    </li>
+    <li class="menu-item"><a href="/#about"><span class="nav-prefix">#</span>About</a></li>
+    <li class="menu-item"><a href="/#skills"><span class="nav-prefix">#</span>Skills</a></li>
+    <li class="menu-item"><a href="/#featured"><span class="nav-prefix">#</span>Featured</a></li>
+    <li class="menu-item"><a href="/reads"><span class="nav-prefix">/</span>Reads</a></li>
   </Navigation>
 </header>
 
 <style lang="scss" is:global>
-
   header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
     .type-icon a {
       display: block;
 

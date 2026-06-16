@@ -129,17 +129,16 @@ body {
 
   h5 {
     font-size: 1.125rem;
-    line-height: 1.6875rem;
+    line-height: 1.5rem;
 
     @include breakpoint(medium) {
       font-size: 1.25rem;
       line-height: 1.875rem;
-      h6 {
-        font-size: 1rem;
-      }
     }
+  }
 
-    line-height: 1.5rem;
+  h6 {
+    font-size: 1rem;
 
     @include breakpoint(medium) {
       font-size: 1.125rem;

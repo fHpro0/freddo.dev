@@ -12,32 +12,63 @@
 @use 'base/color';
 @use 'base/outline';
 @use 'base/space-content';
-@use 'devicon/devicon.min.css';
+
+// Devicons are loaded via CDN in DefaultLayout.astro
 
 .text-gradient {
-    font-weight: bold;
-    text-transform: uppercase;
-    background: linear-gradient(315deg, var(--primary-100) 25%, var(--secondary-100));
-    background-clip: border-box;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: linear-gradient(315deg, var(--primary-100) 25%, var(--secondary-100));
+  background-clip: border-box;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+:global(.darkmode .text-gradient) {
+  font-weight: bold;
+  text-transform: uppercase;
+  background: linear-gradient(315deg, var(--primary-200) 25%, var(--secondary-200));
+  background-clip: border-box;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.color-gradient {
+  background: linear-gradient(260deg, var(--primary-100) 25%, var(--secondary-100));
+  border: none;
+}
+
+:global(.darkmode .color-gradient) {
+  background: linear-gradient(260deg, var(--primary-100) 25%, var(--secondary-100));
+  border: none;
+}
+
+// ─── Mono / code-style utilities ──────────────────────────
+.mono {
+  font-family: var(--font-family-mono);
+}
+
+.section-tag {
+  font-family: var(--font-family-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--green-200);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &::before {
+    content: '// ';
+    opacity: 0.5;
   }
 
-  :global(.darkmode .text-gradient) {
-    font-weight: bold;
-    text-transform: uppercase;
-    background: linear-gradient(315deg, var(--primary-200) 25%, var(--secondary-200));
-    background-clip: border-box;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  &.text-center {
+    justify-content: center;
   }
+}
 
-  .color-gradient {
-    background: linear-gradient(260deg, var(--primary-100) 25%, var(--secondary-100));
-    border: none;
-  }
-
-  :global(.darkmode .color-gradient) {
-    background: linear-gradient(260deg, var(--primary-100) 25%, var(--secondary-100));
-    border: none;
-  }
+.green-glow {
+  text-shadow: 0 0 40px rgba(34, 197, 94, 0.12);
+}

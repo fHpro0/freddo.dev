@@ -6,11 +6,32 @@ import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
 
 const {
-  title = 'Freddo',
-  description = 'This is the personal site of Freddo/Freddy/fHpro0. Coding, Personal, Portfolio',
+  title = 'Frederick Hörner — Full-Stack Developer',
+  description = 'Personal portfolio of Frederick Hörner, Full-Stack Developer at TMT. Building modern web applications with TypeScript, Vue.js, Python, Astro, and more.',
   image = '/social-preview-image.png',
   author = 'Frederick Hörner',
+  keywords = 'Frederick Hörner, freddo, fHpro0, Full-Stack Developer, TypeScript, Vue.js, Python, PHP, Astro, portfolio',
 } = Astro.props
+
+const canonicalUrl = Astro.site
+  ? `${String(Astro.site).replace(/\/$/, '')}${Astro.url.pathname}`
+  : `https://freddo.dev${Astro.url.pathname}`
+
+const personSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Frederick Hörner',
+  alternateName: ['Freddo', 'fHpro0', 'Freddy'],
+  jobTitle: 'Full-Stack Developer',
+  worksFor: { '@type': 'Organization', name: 'TMT', url: 'https://www.tmt.de' },
+  url: 'https://freddo.dev',
+  sameAs: [
+    'https://github.com/fHpro0',
+    'https://www.linkedin.com/in/frederick-hörner-8942a82a8/',
+    'https://www.instagram.com/fH_pro0',
+  ],
+  knowsAbout: ['TypeScript', 'JavaScript', 'Python', 'PHP', 'Vue.js', 'Astro', 'Flutter', 'Docker', 'AI', 'LLM'],
+})
 ---
 
 <html lang="en" dir="ltr">
@@ -18,17 +39,42 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-
-    <!-- favicon -->
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <!-- Dark mode FOUC prevention: pre-apply class before DOMContentLoaded -->
+    <script is:inline>
+      ;(function () {
+        const stored = localStorage.getItem('darkMode')
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (stored === 'enabled' || (stored !== 'disabled' && prefersDark)) {
+          document.documentElement.style.setProperty('--fouc-bg', 'hsl(120,3%,3%)')
+        }
+      })()
+    </script>
+    <style is:inline>
+      html { background: var(--fouc-bg, var(--neutral-100)); }
+    </style>
+
+    <!-- Fonts: Inter + Bricolage Grotesque + JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Devicons (includes Astro and other modern icons) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/devicon.min.css" />
 
     <SiteMeta
       title={title}
-      description={description.substring(0, 100)}
-      url=`${Astro.site}/${title.toLowerCase().replaceAll(' ', '-')}`
+      description={description.substring(0, 160)}
+      url={canonicalUrl}
       image={image}
       author={author}
+      keywords={keywords}
     />
+
+    <script type="application/ld+json" set:html={personSchema} />
   </head>
   <body>
     <Header />
@@ -37,14 +83,15 @@ const {
     </main>
     <Footer />
     <style lang="scss" is:global>
-      // theme settings
       :root {
-        --radius-small: 3px;
-        --radius-large: 6px;
+        --radius-small: 4px;
+        --radius-large: 12px;
+        --radius-xl: 20px;
         --gap-default: 2rem;
         --font-measure: 70ch;
-        --font-family-default: 'Open Sans', sans-serif;
-        --font-family-special: 'Open Sans', sans-serif;
+        --font-family-default: 'Inter', 'Open Sans', sans-serif;
+        --font-family-special: 'Bricolage Grotesque', 'Open Sans', sans-serif;
+        --font-family-mono: 'JetBrains Mono', monospace;
         // light theme
         --font-color: var(--neutral-900);
         --action-color: var(--primary-300);
@@ -54,24 +101,22 @@ const {
         --neutral-background: var(--neutral-200);
       }
 
-      // dark color scheme overrides
-      .darkmode {
+      body.darkmode {
         --font-color: var(--neutral-100);
-        --action-color: var(--secondary-100);
-        --action-color-state: var(--secondary-500);
+        --action-color: var(--secondary-200);
+        --action-color-state: var(--secondary-100);
         --background: var(--dark-100);
         --primary-background: var(--primary-500);
         --neutral-background: var(--neutral-900);
       }
 
-      // sticky footer on low content pages
-      html,
-      body {
-        height: 100%;
-        overflow-x: hidden;
+      html {
+        min-height: 100%;
+        overflow-x: clip;
       }
 
       body {
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
         color: var(--font-color);
@@ -101,6 +146,172 @@ const {
             stroke: white;
           }
         }
+      }
+
+      // ─── Noise & scanline texture ──────────────────────────────
+      body.darkmode {
+        --background: hsl(120, 3%, 3%);
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9998;
+        opacity: 0.025;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-repeat: repeat;
+        background-size: 256px 256px;
+      }
+
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.015;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(255, 255, 255, 0.025) 2px,
+          rgba(255, 255, 255, 0.025) 4px
+        );
+      }
+
+      // ─── Light mode overrides ──────────────────────────────────
+      body:not(.darkmode) {
+        // Deliberate light palette: deep, saturated indigo + teal + emerald
+        // on a soft, slightly cool off-white. Tuned for AA contrast.
+        --background: hsl(228, 33%, 98%);
+        --primary-background: hsl(265, 60%, 96%);
+        --neutral-background: hsl(228, 26%, 95%);
+
+        // Accents — darkened/saturated so text & links read clearly on light bg
+        --primary-100: hsl(263, 72%, 45%);
+        --primary-200: hsl(263, 70%, 41%);
+        --primary-300: hsl(263, 66%, 37%);
+        --primary-400: hsl(263, 62%, 33%);
+        --secondary-100: hsl(187, 90%, 31%);
+        --secondary-200: hsl(189, 86%, 26%);
+        --secondary-300: hsl(190, 84%, 22%);
+        --secondary-400: hsl(190, 84%, 20%);
+        --green-100: hsl(151, 60%, 35%);
+        --green-200: hsl(153, 66%, 29%);
+        --green-300: hsl(154, 70%, 25%);
+
+        // Neutrals flipped: dark text + readable mid-grays on light surfaces
+        --neutral-100: hsl(225, 33%, 13%);
+        --neutral-200: hsl(225, 28%, 18%);
+        --neutral-300: hsl(225, 20%, 24%);
+        --neutral-400: hsl(225, 14%, 34%);
+        --neutral-500: hsl(225, 10%, 44%);
+        --neutral-600: hsl(225, 9%, 52%);
+        --neutral-700: hsl(225, 9%, 58%);
+        #main-navigation {
+          background: rgba(248, 250, 252, 0.96) !important;
+          border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+
+          .nav-logo {
+            color: var(--neutral-800) !important;
+            &__dot { color: var(--primary-300) !important; }
+          }
+
+          li a {
+            color: var(--neutral-700) !important;
+            &:hover { color: var(--primary-300) !important; }
+          }
+        }
+
+        .glass-card {
+          background: rgba(0, 0, 0, 0.02) !important;
+          border-color: rgba(0, 0, 0, 0.07) !important;
+        }
+
+        .rf-card {
+          background: rgba(0, 0, 0, 0.02) !important;
+          border-color: rgba(0, 0, 0, 0.07) !important;
+
+          &:hover {
+            background: rgba(34, 197, 94, 0.03) !important;
+            border-color: rgba(34, 197, 94, 0.25) !important;
+          }
+        }
+
+        .featured-card {
+          background: rgba(0, 0, 0, 0.02) !important;
+          border-color: rgba(34, 197, 94, 0.12) !important;
+
+          &:hover {
+            background: rgba(34, 197, 94, 0.03) !important;
+          }
+        }
+
+        .node-circle {
+          background: rgba(0, 0, 0, 0.04) !important;
+        }
+
+        .btn--ghost {
+          background: rgba(0, 0, 0, 0.05) !important;
+          color: var(--neutral-700) !important;
+          border-color: rgba(0, 0, 0, 0.12) !important;
+
+          &:hover {
+            background: rgba(0, 0, 0, 0.09) !important;
+            color: var(--neutral-900) !important;
+          }
+        }
+
+        // Primary buttons now sit on a dark indigo→teal gradient — black text was unreadable
+        .btn--primary,
+        .btn--primary:hover,
+        .btn--primary:visited {
+          color: hsl(0, 0%, 100%) !important;
+        }
+
+        .button,
+        .button:visited {
+          color: hsl(0, 0%, 100%) !important;
+        }
+
+        .hero-badge__sep,
+        .stat__sep {
+          color: rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .stats-strip {
+          background: rgba(34, 197, 94, 0.03) !important;
+          border-color: rgba(34, 197, 94, 0.1) !important;
+        }
+
+        // Skills tree — hardcoded neon accents are invisible on white; remap to deep tones
+        .branch--lang  { --accent: hsl(263, 70%, 46%) !important; }
+        .branch--fw    { --accent: hsl(188, 86%, 30%) !important; }
+        .branch--ai    { --accent: hsl(36, 92%, 38%) !important; }
+        .branch--tools { --accent: hsl(214, 84%, 46%) !important; }
+        .branch--db    { --accent: hsl(151, 64%, 33%) !important; }
+
+        .branch-dot { box-shadow: 0 0 8px rgba(0, 0, 0, 0.08) !important; }
+
+        // Footer divider is white-on-white in light mode
+        .footer-inner { border-top-color: rgba(0, 0, 0, 0.08) !important; }
+
+        &::before,
+        &::after {
+          opacity: 0 !important;
+        }
+      }
+
+      body:not(.darkmode) .orb {
+        opacity: 0.05 !important;
+        filter: blur(100px) !important;
+      }
+
+      body:not(.darkmode) .stats-strip {
+        background: rgba(0, 120, 80, 0.04) !important;
+        border-color: rgba(0, 120, 80, 0.1) !important;
       }
     </style>
   </body>

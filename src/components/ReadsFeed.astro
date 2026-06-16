@@ -1,0 +1,313 @@
+---
+export type FeedItem = {
+  kind: 'post' | 'project'
+  title: string
+  excerpt: string
+  href: string
+  date: Date | null
+  tags: string[]
+  image: string | null
+  stars?: number
+  language?: string | null
+}
+
+interface Props {
+  items: FeedItem[]
+  langColors?: Record<string, string>
+}
+
+const { items, langColors = {} } = Astro.props
+---
+
+<div class="rf-feed">
+  {items.map((item, i) => (
+    <div class="rf-row">
+      <div class="rf-flow">
+        <div class="rf-flow__dot" />
+        <div class="rf-flow__line" />
+      </div>
+      <a
+        href={item.href}
+        class={`rf-card reveal ${i % 2 === 1 ? 'rf-card--flip' : ''}`}
+        target={item.kind === 'project' ? '_blank' : undefined}
+        rel={item.kind === 'project' ? 'noopener noreferrer' : undefined}
+      >
+        <div class="rf-card__img">
+          {item.image ? (
+            <img src={item.image} alt="" width="120" height="120" decoding="async" loading="lazy" />
+          ) : item.kind === 'post' ? (
+            <div class="rf-card__placeholder rf-card__placeholder--post" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </div>
+          ) : (
+            <div class="rf-card__placeholder rf-card__placeholder--project" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+              </svg>
+              {item.language && (
+                <span class="rf-card__lang-dot" style={`--lc: ${langColors[item.language] ?? '#888'}`} />
+              )}
+            </div>
+          )}
+        </div>
+
+        <div class="rf-card__body">
+          <div class="rf-card__tags">
+            {item.tags.slice(0, 3).map((tag) => (
+              <span class={`rf-tag rf-tag--${tag === 'post' ? 'post' : tag === 'project' ? 'project' : 'default'}`}>
+                #{tag}
+              </span>
+            ))}
+          </div>
+          <span class="rf-card__title">{item.title}</span>
+          {item.excerpt && <span class="rf-card__desc">{item.excerpt}</span>}
+          <div class="rf-card__meta">
+            {item.date && (
+              <time class="rf-card__date mono" datetime={item.date.toISOString()}>
+                {item.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </time>
+            )}
+            {item.kind === 'project' && item.stars && item.stars > 0 && (
+              <span class="rf-card__stars">⭐ {item.stars}</span>
+            )}
+          </div>
+        </div>
+
+        <svg class="rf-card__arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d={item.kind === 'project' ? 'M7 17L17 7M7 7h10v10' : 'M5 12h14M12 5l7 7-7 7'} />
+        </svg>
+      </a>
+    </div>
+  ))}
+</div>
+
+<style lang="scss">
+  .rf-feed {
+    display: flex;
+    flex-direction: column;
+    max-width: 52%;
+    margin-inline: auto;
+
+    @media (max-width: 900px) {
+      max-width: 100%;
+    }
+  }
+
+  .rf-row {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+  }
+
+  // ─── Timeline flow ─────────────────────────────────────────────
+  .rf-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 32px;
+    flex-shrink: 0;
+    padding-top: 1.4rem;
+  }
+
+  .rf-flow__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--secondary-200);
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  .rf-flow__line {
+    width: 1px;
+    flex: 1;
+    background: linear-gradient(to bottom, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.04));
+    margin-top: 4px;
+  }
+
+  .rf-row:last-child .rf-flow__line {
+    display: none;
+  }
+
+  // ─── Card ──────────────────────────────────────────────────────
+  .rf-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    flex: 1;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.6rem;
+    border-radius: 14px;
+    text-decoration: none;
+    color: inherit;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: border-color 0.25s, background 0.2s, transform 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(34, 197, 94, 0.2);
+      transform: translateX(4px);
+
+      .rf-card__arrow {
+        opacity: 0.9;
+        transform: translateX(3px);
+      }
+    }
+
+    &--flip {
+      .rf-card__img { order: 3; }
+      .rf-card__body { order: 2; }
+      .rf-card__arrow { order: 1; transform: scaleX(-1); }
+
+      &:hover .rf-card__arrow {
+        transform: scaleX(-1) translateX(3px);
+      }
+    }
+  }
+
+  .rf-card__img {
+    flex-shrink: 0;
+
+    img {
+      width: 88px;
+      height: 88px;
+      border-radius: 10px;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .rf-card__placeholder {
+    width: 88px;
+    height: 88px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+
+    &--post {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.06), rgba(139, 92, 246, 0.04));
+      border: 1px solid rgba(34, 197, 94, 0.1);
+      color: rgba(34, 197, 94, 0.2);
+    }
+
+    &--project {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.06), rgba(34, 197, 94, 0.04));
+      border: 1px solid rgba(139, 92, 246, 0.12);
+      color: rgba(139, 92, 246, 0.25);
+    }
+  }
+
+  .rf-card__lang-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--lc, #888);
+    opacity: 0.55;
+    display: inline-block;
+  }
+
+  .rf-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .rf-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .rf-tag {
+    font-family: var(--font-family-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.06em;
+    padding: 0.12rem 0.38rem;
+    border-radius: 3px;
+
+    &--post {
+      color: var(--secondary-200);
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.15);
+    }
+
+    &--project {
+      color: #a78bfa;
+      background: rgba(139, 92, 246, 0.08);
+      border: 1px solid rgba(139, 92, 246, 0.15);
+    }
+
+    &--default {
+      color: var(--neutral-600);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+  }
+
+  .rf-card__title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--neutral-100);
+    line-height: 1.3;
+  }
+
+  .rf-card__desc {
+    font-size: 0.8rem;
+    color: var(--neutral-600);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .rf-card__meta {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 0.15rem;
+  }
+
+  .rf-card__date {
+    font-size: 0.68rem;
+    color: var(--neutral-600);
+    letter-spacing: 0.03em;
+  }
+
+  .rf-card__stars {
+    font-size: 0.68rem;
+    color: var(--neutral-600);
+  }
+
+  .rf-card__arrow {
+    opacity: 0.25;
+    flex-shrink: 0;
+    color: var(--secondary-200);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+
+    &.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
