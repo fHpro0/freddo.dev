@@ -1,7 +1,4 @@
 
-import __ASTRO_IMAGE_IMPORT_1MpwQI from "../../assets/images/memoji_pc.png?astroContentImageFlag=&importer=src%2Fcontent%2Fpost%2Fai-dev-tools.mdx";
-import __ASTRO_IMAGE_IMPORT_ZWPBqt from "../../assets/images/memoji_pc.png?astroContentImageFlag=&importer=src%2Fcontent%2Fpost%2Fbuilding-with-astro.mdx";
 import __ASTRO_IMAGE_IMPORT_Z1rtJHX from "../../assets/images/memoji_hello.png?astroContentImageFlag=&importer=src%2Fcontent%2Fpost%2Fhello-world.mdx";
-import __ASTRO_IMAGE_IMPORT_kyyVc from "../../assets/images/memoji_hello.png?astroContentImageFlag=&importer=src%2Fcontent%2Fpost%2Ftypescript-tips.mdx";
-export default new Map([["../../assets/images/memoji_pc.png?astroContentImageFlag=&importer=src%2Fcontent%2Fpost%2Fai-dev-tools.mdx", __ASTRO_IMAGE_IMPORT_1MpwQI], ["../../assets/images/memoji_pc.png?astroContentImageFlag=&importer=src%2Fcontent%2Fpost%2Fbuilding-with-astro.mdx", __ASTRO_IMAGE_IMPORT_ZWPBqt], ["../../assets/images/memoji_hello.png?astroContentImageFlag=&importer=src%2Fcontent%2Fpost%2Fhello-world.mdx", __ASTRO_IMAGE_IMPORT_Z1rtJHX], ["../../assets/images/memoji_hello.png?astroContentImageFlag=&importer=src%2Fcontent%2Fpost%2Ftypescript-tips.mdx", __ASTRO_IMAGE_IMPORT_kyyVc]]);
+export default new Map([["../../assets/images/memoji_hello.png?astroContentImageFlag=&importer=src%2Fcontent%2Fpost%2Fhello-world.mdx", __ASTRO_IMAGE_IMPORT_Z1rtJHX]]);
 		
