@@ -26,7 +26,7 @@ const homeHref = getLangFromUrl(Astro.url) === 'de' ? '/de' : '/'
         </ul>
       </nav>
       <LanguageSwitcher />
-      <DarkMode />
+      <DarkMode initialMode="dark" />
       <ResponsiveToggle />
     </div>
     <nav class="mobile-menu" aria-label="Main navigation mobile">
@@ -531,6 +531,9 @@ const homeHref = getLangFromUrl(Astro.url) === 'de' ? '/de' : '/'
     // opaque (no backdrop-filter): a sticky blur layer smears large text scrolling under it
     background: rgb(6, 10, 8);
     border-bottom: 1px solid rgba(34, 197, 94, 0.08);
+    // clip only horizontal: hidden desktop-menu / wide labels can never cause page-wide
+    // x-overflow. y stays visible so dropdown submenus still drop below the bar.
+    overflow-x: clip;
 
     > .container {
       display: flex;
@@ -577,7 +580,10 @@ const homeHref = getLangFromUrl(Astro.url) === 'de' ? '/de' : '/'
         visibility: hidden;
         z-index: -99;
         position: absolute;
-        left: 0;
+        // containing block is .wrapper (right side of nav); left:0 pushed it off the
+        // right edge → 139px horizontal overflow. Pin to wrapper's right instead.
+        left: auto;
+        right: 0;
       }
 
       .responsive-toggle {

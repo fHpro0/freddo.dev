@@ -62,9 +62,9 @@ const personSchema = JSON.stringify({
     <!-- Dark mode FOUC prevention: pre-apply class before DOMContentLoaded -->
     <script is:inline>
       ;(function () {
+        // dark is the default; only an explicit "disabled" choice opts into light
         const stored = localStorage.getItem('darkMode')
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-        if (stored === 'enabled' || (stored !== 'disabled' && prefersDark)) {
+        if (stored !== 'disabled') {
           document.documentElement.style.setProperty('--fouc-bg', 'hsl(120,3%,3%)')
         }
       })()
@@ -135,7 +135,8 @@ const personSchema = JSON.stringify({
 
       html {
         min-height: 100%;
-        overflow-x: clip;
+        // NB: do NOT put overflow-x here — on iOS Safari overflow on <html> breaks
+        // position:sticky descendants (the header falls out of the top). Clip on <main> instead.
       }
 
       body {
@@ -147,6 +148,9 @@ const personSchema = JSON.stringify({
 
         main {
           flex: 1 0 auto;
+          // clip horizontal overflow here (100vw skill-tree trunk etc.) — main is a sibling
+          // of the sticky <header>, so this never disturbs the header's sticky positioning.
+          overflow-x: clip;
         }
 
         footer {
