@@ -42,7 +42,7 @@ export const ui = {
     'home.skills.databases': 'Databases',
     'home.featured.sub': "A project I'm proud of",
     'home.featured.desc':
-      'This very site — my personal portfolio. Built with Astro, Tailwind CSS, and SCSS: dark neon design, a hand-rolled ASCII water canvas, and zero JS shipped by default.',
+      'This very site — my personal portfolio. Built with Astro, Tailwind CSS, and SCSS: dark neon design, an ASCII water canvas, and zero JS shipped by default.',
     'home.featured.cta': 'Visit Project',
     'home.featured.badge': 'featured',
 
@@ -112,7 +112,7 @@ export const ui = {
     'home.skills.databases': 'Datenbanken',
     'home.featured.sub': 'Ein Projekt, auf das ich stolz bin',
     'home.featured.desc':
-      'Diese Seite selbst — mein persönliches Portfolio. Gebaut mit Astro, Tailwind CSS und SCSS: dunkles Neon-Design, ein handgeschriebenes ASCII-Wasser-Canvas und standardmäßig null ausgeliefertes JS.',
+      'Diese Seite selbst — mein persönliches Portfolio. Gebaut mit Astro, Tailwind CSS und SCSS: dunkles Neon-Design, ein ASCII-Wasser-Canvas und standardmäßig null ausgeliefertes JS.',
     'home.featured.cta': 'Projekt ansehen',
     'home.featured.badge': 'highlight',
 
