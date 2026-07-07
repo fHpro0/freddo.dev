@@ -5,6 +5,8 @@
 html {
   box-sizing: border-box;
   scroll-behavior: smooth;
+  // offset for the sticky header so /#about et al. don't land under the nav
+  scroll-padding-top: 6rem;
 
   @media (prefers-reduced-motion: reduce) {
     scroll-behavior: auto;

@@ -1,0 +1,8 @@
+---
+// Renders its slot only for the active locale. Used inside MDX post bodies to
+// hold both languages in one file; provided to MDX via <Content components={{ Lang }} />.
+import { getLangFromUrl } from '../i18n/utils'
+const { code } = Astro.props
+const lang = getLangFromUrl(Astro.url)
+---
+{lang === code && <slot />}

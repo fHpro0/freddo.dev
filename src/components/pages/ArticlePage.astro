@@ -1,0 +1,240 @@
+---
+import { render } from 'astro:content'
+import { Image } from 'astro:assets'
+import DefaultLayout from '../../layouts/DefaultLayout.astro'
+import Lang from '../Lang.astro'
+import { getLangFromUrl, useTranslations, localizedPath } from '../../i18n/utils'
+
+const { post } = Astro.props
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const dateLocale = lang === 'de' ? 'de-DE' : 'en-US'
+
+const { Content } = await render(post)
+const { title, excerpt, publishDate, image, tags } = post.data
+---
+
+<DefaultLayout
+  title={`${title[lang]} — Frederick Hörner`}
+  description={excerpt?.[lang] ?? title[lang]}
+>
+
+  <article class="blog-article">
+    <a href={localizedPath('/blog', lang)} class="blog-back mono">{t('blog.back')}</a>
+
+    <div class="blog-card">
+      <header class="blog-header">
+        {publishDate && (
+          <time class="blog-date mono" datetime={publishDate.toISOString()}>
+            {publishDate.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' })}
+          </time>
+        )}
+
+        <h1 class="blog-title">{title[lang]}</h1>
+
+        {tags && tags.length > 0 && (
+          <div class="blog-tags">
+            {tags.map((tag) => (
+              <span class="blog-tag mono">#{tag}</span>
+            ))}
+          </div>
+        )}
+      </header>
+
+      {image && (
+        <div class="blog-figure">
+          <Image src={image} alt="" width={640} height={360} densities={[1, 2]} loading="eager" />
+        </div>
+      )}
+
+      <div class="blog-content">
+        <Content components={{ Lang }} />
+      </div>
+    </div>
+  </article>
+
+</DefaultLayout>
+
+<style lang="scss">
+  .blog-article {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+  }
+
+  .blog-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.82rem;
+    color: var(--neutral-600);
+    text-decoration: none;
+    margin-bottom: 2rem;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--green-200);
+    }
+  }
+
+  .blog-card {
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 2.5rem 2.5rem 3rem;
+  }
+
+  .blog-header {
+    margin-bottom: 2rem;
+  }
+
+  .blog-figure {
+    margin-bottom: 2rem;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(34, 197, 94, 0.03);
+    max-width: 100%;
+
+    img {
+      display: block;
+      max-height: 300px;
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .blog-date {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--green-200);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+
+  .blog-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-100) 0%, var(--secondary-100) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .blog-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .blog-tag {
+    font-size: 0.75rem;
+    color: var(--neutral-500);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.04);
+    letter-spacing: 0.02em;
+  }
+
+  // MDX children carry no Astro scope class, so every content rule must be :global
+  .blog-content {
+    color: var(--neutral-400);
+    line-height: 1.85;
+    font-size: 1.05rem;
+
+    :global(p) {
+      margin-bottom: 1.25rem;
+    }
+
+    :global(h2) {
+      font-size: 1.5rem;
+      line-height: 1.4;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--neutral-100);
+      font-weight: 700;
+    }
+
+    :global(h3) {
+      font-size: 1.25rem;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      color: var(--neutral-200);
+    }
+
+    :global(a) {
+      color: var(--secondary-200);
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      transition: text-decoration-color 0.2s;
+    }
+
+    :global(a:hover) {
+      text-decoration-color: var(--secondary-200);
+    }
+
+    :global(code) {
+      font-family: var(--font-family-mono);
+      font-size: 0.85em;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+    }
+
+    :global(pre) {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(34, 197, 94, 0.1);
+      border-radius: 10px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    :global(pre code) {
+      background: none;
+      padding: 0;
+    }
+
+    :global(img) {
+      max-width: 100%;
+      border-radius: 10px;
+      margin: 1.5rem 0;
+    }
+
+    :global(blockquote) {
+      border-left: 3px solid var(--green-200);
+      padding-left: 1.25rem;
+      margin: 1.5rem 0;
+      color: var(--neutral-500);
+      font-style: italic;
+    }
+
+    :global(hr) {
+      border: none;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.06);
+      margin: 2rem 0;
+    }
+
+    :global(ul),
+    :global(ol) {
+      padding-left: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    :global(li) {
+      margin-bottom: 0.35rem;
+    }
+
+    :global(ul) {
+      list-style: disc;
+    }
+
+    :global(ol) {
+      list-style: decimal;
+    }
+  }
+</style>

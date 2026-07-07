@@ -1,9 +1,9 @@
 {
-  "name": "accessible-astro-starter",
-  "description": "An Accessible Starter Theme for Astro including several accessibility features and tools to help you build faster.",
-  "version": "3.1.1",
-  "author": "Mark Teekman",
-  "homepage": "https://accessible-astro.netlify.app/",
+  "name": "freddo.dev",
+  "description": "Personal portfolio of Frederick Hörner — Astro, Tailwind CSS, SCSS.",
+  "version": "1.0.0",
+  "author": "Frederick Hörner",
+  "homepage": "https://freddo.dev",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -13,8 +13,10 @@
   },
   "devDependencies": {
     "@astrojs/mdx": "4.2.0",
-    "@astrojs/partytown": "^2.1.4",
     "@astrojs/tailwind": "6.0.0",
+    "@fontsource-variable/bricolage-grotesque": "^5.2.10",
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "accessible-astro-components": "^2.4.0",

@@ -28,11 +28,26 @@
     }
 
     // execution
-    responsiveToggle.addEventListener('click', (_) => {
-      const mobileNavigation = document.querySelector('.mobile-menu')
+    const mobileNavigation = document.querySelector('.mobile-menu')
 
-      mobileNavigation.classList.toggle('show')
-      mobileNavigation.classList.contains('show') ? openMenu(responsiveToggle) : closeMenu(responsiveToggle)
+    const setOpen = (open) => {
+      mobileNavigation.classList.toggle('show', open)
+      document.body.style.overflow = open ? 'hidden' : ''
+      open ? openMenu(responsiveToggle) : closeMenu(responsiveToggle)
+    }
+
+    responsiveToggle.addEventListener('click', () => {
+      setOpen(!mobileNavigation.classList.contains('show'))
+    })
+
+    // close when a menu link is tapped
+    mobileNavigation.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => setOpen(false))
+    })
+
+    // close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileNavigation.classList.contains('show')) setOpen(false)
     })
   })
 </script>

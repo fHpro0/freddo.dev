@@ -1,5 +1,8 @@
 ---
+import { getLangFromUrl, useTranslations } from '../i18n/utils'
+
 const currentYear = new Date().getFullYear()
+const t = useTranslations(getLangFromUrl(Astro.url))
 ---
 
 <footer>
@@ -7,7 +10,7 @@ const currentYear = new Date().getFullYear()
     <div class="container footer-container">
       <div class="footer-brand">
         <span class="footer-name">Frederick Hörner</span>
-        <span class="footer-role">Full-Stack Developer</span>
+        <span class="footer-role">{t('footer.role')}</span>
       </div>
       <nav class="footer-links" aria-label="Social links">
         <a href="https://github.com/fHpro0" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
@@ -23,7 +26,7 @@ const currentYear = new Date().getFullYear()
           Instagram
         </a>
       </nav>
-      <p class="footer-copy">&copy; {currentYear} Frederick Hörner — Made with <a href="https://astro.build/" target="_blank" rel="noopener noreferrer">Astro</a></p>
+      <p class="footer-copy">&copy; {currentYear} Frederick Hörner — {t('footer.madeWith')} <a href="https://astro.build/" target="_blank" rel="noopener noreferrer">Astro</a></p>
     </div>
   </section>
 </footer>

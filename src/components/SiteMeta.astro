@@ -1,7 +1,7 @@
 ---
 import { ViewTransitions } from 'astro:transitions'
 
-const { title, description, url, image, author, keywords } = Astro.props
+const { title, description, url, image, author, keywords, locale = 'en_US' } = Astro.props
 ---
 
 <!-- General -->
@@ -19,7 +19,7 @@ const { title, description, url, image, author, keywords } = Astro.props
 <meta property="og:description" content={description} />
 <meta property="og:image" content={Astro.site ? `${Astro.site}${image}` : image} />
 <meta property="og:site_name" content="Frederick Hörner" />
-<meta property="og:locale" content="en_US" />
+<meta property="og:locale" content={locale} />
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />

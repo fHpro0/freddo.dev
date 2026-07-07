@@ -1,0 +1,71 @@
+---
+import { getLangFromUrl, localizedPath } from '../i18n/utils'
+import { languages, type Lang } from '../i18n/ui'
+
+const current = getLangFromUrl(Astro.url)
+const path = Astro.url.pathname
+const codes = Object.keys(languages) as Lang[]
+---
+
+<div class="lang-switch" role="group" aria-label="Language">
+  {codes.map((code) => (
+    <a
+      href={localizedPath(path, code)}
+      class:list={['lang-switch__opt', { 'is-active': code === current }]}
+      hreflang={code}
+      aria-current={code === current ? 'true' : undefined}
+      data-lang={code}
+    >
+      {code.toUpperCase()}
+    </a>
+  ))}
+</div>
+
+<script>
+  // Persist manual choice so the first-visit auto-redirect in DefaultLayout
+  // stops overriding it. Delegated so it survives ViewTransitions swaps.
+  document.addEventListener('click', (e) => {
+    const opt = (e.target as HTMLElement)?.closest('.lang-switch__opt') as HTMLElement | null
+    if (opt?.dataset.lang) localStorage.setItem('lang', opt.dataset.lang)
+  })
+</script>
+
+<style lang="scss">
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.15rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .lang-switch__opt {
+    font-family: var(--font-family-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    padding: 0.3rem 0.45rem;
+    border-radius: 6px;
+    color: var(--neutral-600);
+    text-decoration: none;
+    transition: color 0.2s, background 0.2s;
+
+    &:hover {
+      color: var(--action-color);
+      text-decoration: none;
+    }
+
+    &.is-active {
+      color: var(--action-color);
+      background: color-mix(in srgb, var(--action-color) 16%, transparent);
+    }
+  }
+
+  :global(body:not(.darkmode)) .lang-switch {
+    border-color: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.03);
+  }
+</style>

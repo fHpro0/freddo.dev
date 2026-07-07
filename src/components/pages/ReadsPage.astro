@@ -1,0 +1,334 @@
+---
+import { getCollection } from 'astro:content'
+import { Image } from 'astro:assets'
+import DefaultLayout from '../../layouts/DefaultLayout.astro'
+import ReadsFeed, { type FeedItem } from '../ReadsFeed.astro'
+import { fetchRepos, LANGUAGE_COLORS as langColors, FALLBACK_DESCRIPTION } from '../../utils/github'
+import { getLangFromUrl, useTranslations, localizedPath } from '../../i18n/utils'
+import memojiPc from '../../assets/images/memoji_pc.png'
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+
+const allPosts = await getCollection('post', ({ data }) => !data.draft)
+allPosts.sort((a, b) => (b.data.publishDate?.getTime() ?? 0) - (a.data.publishDate?.getTime() ?? 0))
+
+let projects = await fetchRepos()
+
+if (projects.length === 0) {
+  // ponytail: static stand-in for when the GitHub API is down/rate-limited at build time
+  projects = [
+    {
+      name: 'freddo.dev',
+      description: 'My personal portfolio built with Astro, Tailwind CSS, and SCSS. Dark neon aesthetic with ASCII canvas animations.',
+      html_url: 'https://github.com/fHpro0/freddo.dev',
+      pushed_at: '2024-06-01T00:00:00Z',
+      language: 'Astro',
+      stargazers_count: 0,
+      fork: false,
+    },
+  ]
+}
+
+const feed: FeedItem[] = [
+  ...allPosts.map((p) => ({
+    kind: 'post' as const,
+    title: p.data.title[lang],
+    excerpt: p.data.excerpt?.[lang] ?? '',
+    href: localizedPath(`/blog/${p.slug}`, lang),
+    date: p.data.publishDate ?? null,
+    tags: ['post', ...(p.data.tags ?? [])],
+    image: p.data.image ?? null,
+  })),
+  ...projects.map((p) => ({
+    kind: 'project' as const,
+    title: p.name,
+    excerpt: p.description ?? FALLBACK_DESCRIPTION,
+    href: p.html_url,
+    date: p.pushed_at ? new Date(p.pushed_at) : null,
+    tags: ['project', ...(p.language ? [p.language] : [])],
+    image: null,
+    stars: p.stargazers_count,
+    language: p.language,
+  })),
+]
+
+feed.sort((a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0))
+---
+
+<DefaultLayout
+  title={t('reads.meta.title')}
+  description={t('reads.meta.description')}
+  keywords="Frederick Hörner, freddo, blog, projects, development, TypeScript, Vue.js, Astro, programming"
+>
+
+  <!-- ═══════════════════ HERO ═══════════════════ -->
+  <section class="hero" id="reads-hero" aria-label="Reads Archive">
+    <canvas id="hero-ascii" aria-hidden="true"></canvas>
+    <div class="orb orb-1" aria-hidden="true"></div>
+    <div class="orb orb-2" aria-hidden="true"></div>
+    <div class="orb orb-3" aria-hidden="true"></div>
+    <div class="container hero__container">
+      <div class="hero__text reveal">
+        <p class="hero__eyebrow">// reads.archive</p>
+        <h1 class="hero__name">
+          <span class="g-text">Reads</span>
+        </h1>
+        <p class="hero__subtitle">{t('reads.subtitle')}</p>
+        <p class="hero__desc">
+          {t('reads.desc')}
+        </p>
+        <div class="hero-badge reveal">
+          <span class="mono">// posts.and.projects</span>
+          <span class="hero-badge__sep" aria-hidden="true">—</span>
+          <span class="hero-badge__tags">{allPosts.length} {allPosts.length === 1 ? t('reads.post') : t('reads.posts')} · {projects.length} {projects.length === 1 ? t('reads.project') : t('reads.projects')}</span>
+        </div>
+      </div>
+      <div class="hero__image reveal reveal--delay">
+        <Image
+          src={memojiPc}
+          alt="Frederick working at a computer"
+          width={300}
+          height={358}
+          densities={[1, 2]}
+          loading="eager"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ FEED ═══════════════════ -->
+  <section class="feed-section">
+    <div class="container">
+      {feed.length > 0 ? (
+        <ReadsFeed items={feed} langColors={langColors} lang={lang} />
+      ) : (
+        <p class="empty reveal">{t('reads.empty')}</p>
+      )}
+    </div>
+  </section>
+
+</DefaultLayout>
+
+<script>
+  import { initAsciiWater } from '../../utils/asciiWater'
+
+  document.addEventListener('astro:page-load', () => {
+    // ─── Scroll-reveal ─────────────────────────────────────────────
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('revealed')
+            observer.unobserve(e.target)
+          }
+        })
+      },
+      { threshold: 0.06 }
+    )
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
+
+    // ─── ASCII hero water/wave canvas (shared) ───────────────────
+    const asciiCanvas = document.getElementById('hero-ascii') as HTMLCanvasElement | null
+    const heroSection = document.getElementById('reads-hero')
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (asciiCanvas && heroSection && !reduceMotion) {
+      const cleanup = initAsciiWater(asciiCanvas, heroSection)
+      document.addEventListener('astro:before-preparation', cleanup, { once: true })
+    }
+  })
+</script>
+
+<style lang="scss">
+  .g-text {
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-100) 0%, var(--secondary-100) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+
+    &.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    &--delay {
+      transition-delay: 0.18s;
+    }
+  }
+
+  #hero-ascii {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(90px);
+    z-index: 0;
+  }
+
+  .orb-1 {
+    width: 650px;
+    height: 650px;
+    background: radial-gradient(circle, var(--primary-400), transparent 70%);
+    opacity: 0.18;
+    top: -180px;
+    right: -120px;
+  }
+
+  .orb-2 {
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, var(--secondary-300), transparent 70%);
+    opacity: 0.1;
+    bottom: -50px;
+    left: -60px;
+  }
+
+  .orb-3 {
+    width: 240px;
+    height: 240px;
+    background: radial-gradient(circle, var(--primary-200), transparent 70%);
+    opacity: 0.07;
+    top: 55%;
+    left: 42%;
+  }
+
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+
+    > .container {
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  .hero__container {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 3rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+  }
+
+  .hero__eyebrow {
+    display: block;
+    font-family: var(--font-family-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+    color: var(--secondary-200);
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
+  }
+
+  .hero__name {
+    font-size: clamp(2.8rem, 6vw, 4.75rem) !important;
+    line-height: 1.08 !important;
+    margin-bottom: 1.1rem;
+  }
+
+  .hero__subtitle {
+    font-size: 1.15rem;
+    color: var(--neutral-500);
+    margin-bottom: 0.9rem;
+  }
+
+  .hero__desc {
+    font-size: 1rem;
+    color: var(--neutral-600);
+    line-height: 1.75;
+    max-width: 480px;
+    margin-bottom: 2rem;
+
+    @media (max-width: 768px) {
+      margin-inline: auto;
+    }
+  }
+
+  .hero__image {
+    @media (max-width: 768px) {
+      display: flex;
+      justify-content: center;
+      order: -1;
+    }
+
+    img {
+      width: 280px;
+      height: auto;
+      filter: drop-shadow(0 0 60px rgba(176, 100, 235, 0.22));
+
+      @media (max-width: 768px) {
+        width: 180px;
+      }
+    }
+  }
+
+  .hero-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+    font-size: 0.78rem;
+    color: var(--green-200);
+
+    @media (max-width: 768px) {
+      justify-content: center;
+    }
+
+    .mono {
+      font-family: var(--font-family-mono);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    &__sep {
+      color: rgba(255, 255, 255, 0.12);
+
+      @media (max-width: 480px) {
+        display: none;
+      }
+    }
+
+    &__tags {
+      color: var(--neutral-600);
+      font-size: 0.75rem;
+
+      @media (max-width: 480px) {
+        display: none;
+      }
+    }
+  }
+
+  .feed-section {
+    padding: 4rem 0 6rem;
+  }
+
+  .empty {
+    padding: 4rem 0;
+    text-align: center;
+    color: var(--neutral-600);
+  }
+</style>

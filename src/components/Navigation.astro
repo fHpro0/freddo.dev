@@ -1,11 +1,15 @@
 ---
 import ResponsiveToggle from './ResponsiveToggle.astro'
+import LanguageSwitcher from './LanguageSwitcher.astro'
 import { DarkMode } from 'accessible-astro-components'
+import { getLangFromUrl } from '../i18n/utils'
+
+const homeHref = getLangFromUrl(Astro.url) === 'de' ? '/de' : '/'
 ---
 
 <div id="main-navigation" class="is-desktop py-8">
   <div class="container">
-    <a href="/" class="flex items-center gap-2 !no-underline">
+    <a href={homeHref} class="flex items-center gap-2 !no-underline">
       <svg id="nav-ascii-avatar" class="nav-avatar" viewBox="0 0 44 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <rect x="1" y="1" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/>
         <rect x="25" y="1" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/>
@@ -21,6 +25,7 @@ import { DarkMode } from 'accessible-astro-components'
           <slot />
         </ul>
       </nav>
+      <LanguageSwitcher />
       <DarkMode />
       <ResponsiveToggle />
     </div>
@@ -467,24 +472,41 @@ import { DarkMode } from 'accessible-astro-components'
       const sections = ['about', 'skills', 'featured']
       const sectionEls = sections.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[]
 
+      // track each section's current visibility; the single most-visible one wins.
+      // (old code let the last intersecting entry overwrite — About + Skills both
+      // crossing the threshold made Skills, later in the DOM, win.)
+      const ratios = new Map<string, number>()
+
+      const highlight = (activeId: string | null) => {
+        mainNav.querySelectorAll('nav > ul a').forEach((link) => {
+          const a = link as HTMLAnchorElement
+          const isMatch = activeId !== null && a.getAttribute('href') === `/#${activeId}`
+          a.classList.toggle('is-active', isMatch)
+          if (isMatch) {
+            a.setAttribute('aria-current', 'page')
+          } else {
+            a.removeAttribute('aria-current')
+          }
+        })
+      }
+
       const spyObserver = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            if (!entry.isIntersecting) return
-            const id = entry.target.id
-            mainNav.querySelectorAll('nav > ul a').forEach((link) => {
-              const a = link as HTMLAnchorElement
-              const isMatch = a.getAttribute('href') === `/#${id}`
-              a.classList.toggle('is-active', isMatch)
-              if (isMatch) {
-                a.setAttribute('aria-current', 'page')
-              } else {
-                a.removeAttribute('aria-current')
-              }
-            })
+            ratios.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0)
           })
+          let bestId: string | null = null
+          let bestRatio = 0
+          ratios.forEach((ratio, id) => {
+            if (ratio > bestRatio) {
+              bestRatio = ratio
+              bestId = id
+            }
+          })
+          highlight(bestId)
         },
-        { threshold: 0.35 }
+        // finer thresholds so ratios are comparable, not just a single on/off cutoff
+        { threshold: [0, 0.25, 0.5, 0.75, 1] }
       )
 
       sectionEls.forEach((el) => spyObserver.observe(el))
@@ -506,9 +528,8 @@ import { DarkMode } from 'accessible-astro-components'
 
   #main-navigation {
     z-index: 100;
-    background: rgba(4, 8, 6, 0.94);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    // opaque (no backdrop-filter): a sticky blur layer smears large text scrolling under it
+    background: rgb(6, 10, 8);
     border-bottom: 1px solid rgba(34, 197, 94, 0.08);
 
     > .container {
@@ -538,8 +559,17 @@ import { DarkMode } from 'accessible-astro-components'
       .mobile-menu {
         display: none;
 
+        // open menu = full-screen overlay above the page, does not shift content
         &.show {
-          display: block;
+          display: flex;
+          position: fixed;
+          inset: 0;
+          z-index: 90;
+          align-items: center;
+          justify-content: center;
+          padding: 6rem 2rem 2rem;
+          background: var(--background);
+          animation: nav-overlay-in 0.25s ease-out;
         }
       }
 
@@ -553,6 +583,13 @@ import { DarkMode } from 'accessible-astro-components'
       .responsive-toggle {
         display: block;
       }
+    }
+
+    // keep the logo + toggle row clickable above the overlay
+    &.is-mobile .container > a,
+    &.is-mobile .wrapper {
+      position: relative;
+      z-index: 95;
     }
 
     .wrapper {
@@ -602,10 +639,12 @@ import { DarkMode } from 'accessible-astro-components'
 
     .mobile-menu {
       flex-basis: 100%;
-      padding: 2rem 0;
 
       > ul {
         flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
 
         ul {
           position: relative;
@@ -617,7 +656,20 @@ import { DarkMode } from 'accessible-astro-components'
       button {
         display: block;
         width: 100%;
-        padding: 0.5rem 0;
+        text-align: center;
+        padding: 0.75rem 0;
+        font-size: 1.25rem;
+      }
+    }
+
+    @keyframes nav-overlay-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mobile-menu.show {
+        animation: none;
       }
     }
 

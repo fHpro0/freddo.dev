@@ -1,0 +1,25 @@
+services:
+  traefik:
+    image: traefik:v3
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+    ports:
+      - "80:80"
+      - "8080:8080" # dashboard, remove in prod
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  web:
+    image: oven/bun:1
+    command: bun run /app/serve.ts
+    working_dir: /app
+    volumes:
+      - ./docker/serve.ts:/app/serve.ts:ro
+      - ./dist:/dist:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.web.rule=Host(`freddo.dev`)
+      - traefik.http.routers.web.entrypoints=web
+      - traefik.http.services.web.loadbalancer.server.port=3000

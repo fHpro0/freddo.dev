@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content'
-import ArticlePage from '../../components/pages/ArticlePage.astro'
+import ArticlePage from '../../../components/pages/ArticlePage.astro'
 
 export async function getStaticPaths() {
   const posts = await getCollection('post', ({ data }) => !data.draft)

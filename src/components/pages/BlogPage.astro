@@ -1,0 +1,254 @@
+---
+import { getCollection } from 'astro:content'
+import { Image } from 'astro:assets'
+import DefaultLayout from '../../layouts/DefaultLayout.astro'
+import { getLangFromUrl, useTranslations, localizedPath } from '../../i18n/utils'
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const dateLocale = lang === 'de' ? 'de-DE' : 'en-US'
+
+const allPosts = await getCollection('post', ({ data }) => !data.draft)
+allPosts.sort((a, b) => (b.data.publishDate?.getTime() ?? 0) - (a.data.publishDate?.getTime() ?? 0))
+---
+
+<DefaultLayout
+  title={t('blog.meta.title')}
+  description={t('blog.meta.description')}
+  keywords="Frederick Hörner, freddo, blog, development, TypeScript, Vue.js, Astro, programming"
+>
+
+  <section class="section" id="blog" aria-labelledby="blog-heading">
+    <div class="container">
+      <p class="section-tag text-center reveal">blog.archive</p>
+      <h1 id="blog-heading" class="section-title text-center reveal">
+        <span class="g-text">Blog</span>
+      </h1>
+      <p class="section-sub text-center reveal">
+        {t('blog.subtitle')}
+      </p>
+
+      {allPosts.length > 0 ? (
+        <div class="posts-grid">
+          {allPosts.map((post) => (
+            <a href={localizedPath(`/blog/${post.slug}`, lang)} class="glass-card post-card reveal">
+              <div class="post-card__image">
+                {post.data.image ? (
+                  <Image src={post.data.image} alt="" width={320} height={180} densities={[1, 2]} loading="lazy" />
+                ) : (
+                  <div class="post-card__placeholder" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div class="post-card__body">
+                {post.data.publishDate && (
+                  <time class="post-card__date mono" datetime={post.data.publishDate.toISOString()}>
+                    {post.data.publishDate.toLocaleDateString(dateLocale, { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </time>
+                )}
+                <h2 class="post-card__title">{post.data.title[lang]}</h2>
+                {post.data.excerpt && (
+                  <p class="post-card__excerpt">{post.data.excerpt[lang]}</p>
+                )}
+                {post.data.tags && post.data.tags.length > 0 && (
+                  <div class="post-card__tags">
+                    {post.data.tags.map((tag) => (
+                      <span class="post-card__tag mono">#{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="fallback reveal">
+          <p class="fallback__text">{t('blog.empty')}</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+</DefaultLayout>
+
+<style lang="scss">
+  .section {
+    padding: 5rem 0;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-sub {
+    font-size: 1.05rem;
+    color: var(--neutral-600);
+    margin-bottom: 3rem;
+  }
+
+  .g-text {
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-100) 0%, var(--secondary-100) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+
+    &.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    padding: 0;
+
+    &:hover {
+      transform: translateY(-4px);
+      border-color: rgba(34, 197, 94, 0.2);
+
+      .post-card__image img {
+        transform: scale(1.03);
+      }
+    }
+
+    &__image {
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.06), rgba(139, 92, 246, 0.06));
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+    }
+
+    &__placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(34, 197, 94, 0.15);
+    }
+
+    &__body {
+      padding: 1.25rem 1.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+    }
+
+    &__date {
+      font-size: 0.72rem;
+      color: var(--green-200);
+      letter-spacing: 0.03em;
+    }
+
+    &__title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--neutral-100);
+      line-height: 1.35;
+      margin: 0;
+    }
+
+    &__excerpt {
+      font-size: 0.85rem;
+      color: var(--neutral-600);
+      line-height: 1.6;
+      margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    &__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: auto;
+      padding-top: 0.5rem;
+    }
+
+    &__tag {
+      font-size: 0.68rem;
+      color: var(--neutral-600);
+      letter-spacing: 0.02em;
+      padding: 0.15rem 0.45rem;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+  }
+
+  .fallback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 0;
+
+    &__text {
+      color: var(--neutral-600);
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('revealed')
+            observer.unobserve(e.target)
+          }
+        })
+      },
+      { threshold: 0.08 }
+    )
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
+  })
+</script>

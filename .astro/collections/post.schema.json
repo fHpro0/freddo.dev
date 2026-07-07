@@ -40,10 +40,36 @@
           "type": "boolean"
         },
         "title": {
-          "type": "string"
+          "type": "object",
+          "properties": {
+            "en": {
+              "type": "string"
+            },
+            "de": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "en",
+            "de"
+          ],
+          "additionalProperties": false
         },
         "excerpt": {
-          "type": "string"
+          "type": "object",
+          "properties": {
+            "en": {
+              "type": "string"
+            },
+            "de": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "en",
+            "de"
+          ],
+          "additionalProperties": false
         },
         "image": {
           "type": "string"
